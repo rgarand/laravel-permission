@@ -8,7 +8,7 @@ use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class PermissionMiddleware
 {
-    public function handle($request, Closure $next, $permission)
+    public function handle($request, Closure $next, $permission, $tenant = null)
     {
         if (Auth::guest()) {
             throw UnauthorizedException::notLoggedIn();
@@ -19,7 +19,11 @@ class PermissionMiddleware
             : explode('|', $permission);
 
         foreach ($permissions as $permission) {
-            if (Auth::user()->can($permission)) {
+            if ( is_null($tenant) )
+                $pass = Auth::user()->can($permission);
+            else
+                $pass = Auth::user()->hasPermissionToTenant($permission, $request->route('tenant'));
+            if ($pass) {
                 return $next($request);
             }
         }
