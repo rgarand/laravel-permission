@@ -19,10 +19,7 @@ class PermissionMiddleware
             : explode('|', $permission);
 
         foreach ($permissions as $permission) {
-            if ( is_null($tenant) )
-                $pass = Auth::user()->can($permission);
-            else
-                $pass = Auth::user()->hasPermissionToTenant($permission, $request->route('tenant'));
+            $pass = is_null($tenant) ? Auth::user()->can($permission) : Auth::user()->hasPermissionToTenant($permission, $request->route('tenant'));
             if ($pass) {
                 return $next($request);
             }
