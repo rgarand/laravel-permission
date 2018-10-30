@@ -102,7 +102,7 @@ trait HasTenants
 
         if ($role instanceof Collection) {
             foreach ($role as $k => $v) {
-                if ($this->tenants->where('pivot.tenant_id', $tenantId)->isNotEmpty()) {
+                if ($this->tenants->where('pivot.tenant_id', $tenantId)->where('pivot.role_id', $v->id)->isNotEmpty()) {
                     return true;
                 }
             }
